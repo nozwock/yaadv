@@ -30,8 +30,6 @@ pub enum Commands {
 //     pub year: Option<i32>,
 // }
 
-// TODO: allow custom input filenames formatting
-
 #[derive(Args, Debug)]
 pub struct Inputs {
     /// All 25 days by default
