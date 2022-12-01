@@ -1,7 +1,7 @@
 use clap::{Args, Parser, Subcommand};
 
 #[derive(Parser, Debug)]
-#[command(author, version, long_about = None, arg_required_else_help = true)]
+#[command(author, version, about, long_about = None, arg_required_else_help = true)]
 pub struct Cli {
     #[command(subcommand)]
     pub command: Commands,
@@ -9,10 +9,10 @@ pub struct Cli {
 
 #[derive(Subcommand, Debug)]
 pub enum Commands {
-    /// Fetch problem statement from AOC
-    // Prints to stdout
-    #[command(short_flag = 'p')]
-    Problems(Problems),
+    // /// Fetch problem statement from AOC
+    // // Prints to stdout
+    // #[command(short_flag = 'p')]
+    // Problem(Problem),
     /// Fetch your inputs from AOC
     #[command(short_flag = 'i')]
     Inputs(Inputs),
@@ -21,21 +21,28 @@ pub enum Commands {
     Credentials(Credentials),
 }
 
+// #[derive(Args, Debug)]
+// pub struct Problem {
+//     #[arg(short, long, required = true)]
+//     pub day: Option<u8>,
+//     /// Current AOC year by default
+//     #[arg(short, long)]
+//     pub year: Option<i32>,
+// }
+
+// TODO: allow custom input filenames formatting
+
 #[derive(Args, Debug)]
-pub struct Problems {
-    #[arg(short, long, required = true)]
+pub struct Inputs {
+    /// All 25 days by default
+    #[arg(short, long)]
     pub day: Option<u8>,
     /// Current AOC year by default
     #[arg(short, long)]
     pub year: Option<i32>,
-}
-
-#[derive(Args, Debug)]
-pub struct Inputs {
-    #[arg(short, long)]
-    pub day: Option<u8>,
-    #[arg(short, long, required = true)]
-    pub year: Option<i32>,
+    /// Set output directory for fetched inputs; `./inputs` by default
+    #[arg(short, long, value_name = "DIR")]
+    pub output: Option<String>,
 }
 
 #[derive(Args, Debug)]
