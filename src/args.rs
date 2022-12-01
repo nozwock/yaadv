@@ -24,7 +24,7 @@ pub enum Commands {
 // #[derive(Args, Debug)]
 // pub struct Problem {
 //     #[arg(short, long, required = true)]
-//     pub day: Option<u8>,
+//     pub day: Option<u32>,
 //     /// Current AOC year by default
 //     #[arg(short, long)]
 //     pub year: Option<i32>,
@@ -36,7 +36,7 @@ pub enum Commands {
 pub struct Inputs {
     /// All 25 days by default
     #[arg(short, long)]
-    pub day: Option<u8>,
+    pub day: Option<u32>,
     /// Current AOC year by default
     #[arg(short, long)]
     pub year: Option<i32>,

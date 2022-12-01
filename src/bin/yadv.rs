@@ -6,7 +6,7 @@ fn main() {
     let cli = Cli::parse();
     let curr_aoc_yr;
     {
-        let curr = chrono::Utc::now().date_naive();
+        let curr = chrono::Utc::now().naive_utc();
         let mut yr = curr.year();
         if curr.month() != 12 {
             yr -= 1;
