@@ -4,7 +4,7 @@ pub struct AdvInput<'a> {
     pub day: u32,
     pub year: i32,
     /// Path to store the input files in
-    directory: &'a Path,
+    pub directory: &'a Path,
 }
 
 impl<'a> AdvInput<'a> {
@@ -14,13 +14,6 @@ impl<'a> AdvInput<'a> {
             year,
             directory,
         }
-    }
-    pub fn set_directory(mut self, directory: &'a Path) -> Self {
-        self.directory = directory;
-        self
-    }
-    pub fn directory(&self) -> &Path {
-        &self.directory
     }
     fn filename(&self) -> String {
         format!("day{}.input", self.day)
