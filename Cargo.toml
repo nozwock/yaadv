@@ -1,5 +1,5 @@
 [package]
-name = "yadv"
+name = "yaadv"
 description = "Yet another tool to help deal with your Advent of Code data"
 version = "0.1.0"
 edition = "2021"

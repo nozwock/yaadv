@@ -4,7 +4,7 @@ use clap::Parser;
 use colored::*;
 use indicatif::{ProgressBar, ProgressStyle};
 use std::{fs, io::Write, process, time::Duration};
-use yadv::{api::fetch_inputs, args::Cli, credentials::Secrets, inputs::AdvInput};
+use yaadv::{api::fetch_inputs, args::Cli, credentials::Secrets, inputs::AdvInput};
 
 fn download_inputs(inputs: &Vec<AdvInput>, session_token: &str) -> Result<Vec<String>> {
     fs::create_dir_all(
@@ -37,7 +37,7 @@ fn main() -> Result<()> {
     let cli = Cli::parse();
 
     match cli.command {
-        yadv::args::Commands::Inputs(inputs) => {
+        yaadv::args::Commands::Inputs(inputs) => {
             let days = if let Some(day) = inputs.day {
                 vec![day]
             } else {
@@ -84,7 +84,7 @@ fn main() -> Result<()> {
             errs.into_iter().for_each(|err| eprintln!("{}", err));
             println!("{}", "Done downloading input files!".green());
         }
-        yadv::args::Commands::Credentials(creds) => {
+        yaadv::args::Commands::Credentials(creds) => {
             if let Some(token) = creds.token {
                 Secrets {
                     session_token: Some(token),
