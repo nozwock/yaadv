@@ -102,7 +102,7 @@ fn main() -> Result<()> {
 
             sp.finish_and_clear();
             errs.into_iter().for_each(|err| eprintln!("{}", err));
-            println!("{}", "Done downloading input files!".green());
+            eprintln!("{}", "Done downloading input files!".green());
         }
         yaadv::args::Commands::Credentials(creds) => {
             if let Some(token) = creds.token {
@@ -140,7 +140,7 @@ fn main() -> Result<()> {
                 match token.get_session_token() {
                     Some(token) => println!("Your session token: {}", token.bright_cyan()),
                     None => {
-                        println!("{}", "No session token found!".red());
+                        eprintln!("{}", "No session token found!".red());
                         process::exit(1);
                     }
                 }
