@@ -9,15 +9,16 @@ pub struct Cli {
 
 #[derive(Subcommand, Debug)]
 pub enum Commands {
+    // ! Not certain if I want to add this feat...though, If I did, I'd also have to add a feat for submiting answers aswell.
     // /// Fetch problem statement from AOC
     // // Prints to stdout
     // #[command(short_flag = 'p')]
     // Problem(Problem),
     /// Fetch your inputs from AOC
-    #[command(short_flag = 'i')]
+    #[command(short_flag = 'I')]
     Inputs(Inputs),
     /// Manage AOC session token
-    #[command(short_flag = 'c', arg_required_else_help = true)]
+    #[command(short_flag = 'C', arg_required_else_help = true)]
     Credentials(Credentials),
 }
 
