@@ -1,10 +1,12 @@
 use crate::inputs::AdvInput;
-use anyhow::Result;
 use std::time::Duration;
-use ureq::AgentBuilder;
+use ureq::{AgentBuilder, Response};
 
 /// Fetches AOC inputs synchronously
-pub fn fetch_inputs(inputs: &Vec<AdvInput>, session_token: &str) -> Vec<Result<String>> {
+pub fn fetch_inputs(
+    inputs: &Vec<AdvInput>,
+    session_token: &str,
+) -> Vec<Result<Response, ureq::Error>> {
     let mut out = vec![];
     let agent = AgentBuilder::new()
         .timeout_read(Duration::from_secs(5))
@@ -16,9 +18,7 @@ pub fn fetch_inputs(inputs: &Vec<AdvInput>, session_token: &str) -> Vec<Result<S
         let body = agent
             .get(&input.request_url())
             .set("Cookie", &session_token)
-            .call()
-            .map_err(anyhow::Error::msg)
-            .and_then(|resp| resp.into_string().map_err(anyhow::Error::msg));
+            .call();
         out.push(body);
     }
 

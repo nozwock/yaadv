@@ -1,4 +1,4 @@
-use anyhow::{Context, Result};
+use anyhow::{bail, Context, Result};
 use chrono::Datelike;
 use clap::Parser;
 use colored::*;
@@ -25,8 +25,28 @@ fn download_inputs(inputs: &Vec<AdvInput>, session_token: &str) -> Result<Vec<St
         .map(|(i, resp)| (&inputs[i], resp))
     {
         match resp {
-            Ok(resp) => fs::File::create(input.path())?.write_all(resp.as_bytes())?,
-            Err(err) => out_err.push(format!("{} {}", "Error:".red(), err.to_string().red())),
+            Ok(resp) => {
+                fs::File::create(input.path())?.write_all(resp.into_string()?.as_bytes())?
+            }
+            Err(err) => {
+                if let ureq::Error::Status(err_code, _) = err {
+                    if err_code == 404 {
+                        out_err.push(format!(
+                            "{} {} {} {}",
+                            "Error 404:".red(),
+                            "Day".red(),
+                            input.day.to_string().red(),
+                            "is either not unlocked yet or doesn't exist".red()
+                        ));
+                    } else {
+                        // for any error other than 404; just abort
+                        bail!(
+                            "unhandled error while downloading input files!\n{}",
+                            err.to_string()
+                        )
+                    }
+                }
+            }
         };
     }
 
