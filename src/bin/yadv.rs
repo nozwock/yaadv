@@ -2,10 +2,11 @@ use anyhow::{Context, Result};
 use chrono::Datelike;
 use clap::Parser;
 use colored::*;
-use std::{fs, io::Write, process};
+use indicatif::{ProgressBar, ProgressStyle};
+use std::{fs, io::Write, process, time::Duration};
 use yadv::{api::fetch_inputs, args::Cli, credentials::Secrets, inputs::AdvInput};
 
-fn download_inputs(inputs: &Vec<AdvInput>, session_token: &str) -> Result<()> {
+fn download_inputs(inputs: &Vec<AdvInput>, session_token: &str) -> Result<Vec<String>> {
     fs::create_dir_all(
         inputs
             .iter()
@@ -16,6 +17,8 @@ fn download_inputs(inputs: &Vec<AdvInput>, session_token: &str) -> Result<()> {
             .context("no parent folder exists")?,
     )?;
 
+    let mut out_err = vec![];
+
     for (input, resp) in fetch_inputs(inputs, session_token)
         .into_iter()
         .enumerate()
@@ -23,11 +26,11 @@ fn download_inputs(inputs: &Vec<AdvInput>, session_token: &str) -> Result<()> {
     {
         match resp {
             Ok(resp) => fs::File::create(input.path())?.write_all(resp.as_bytes())?,
-            Err(err) => eprintln!("{} {}", "Error:".red(), err.to_string().red()),
+            Err(err) => out_err.push(format!("{} {}", "Error:".red(), err.to_string().red())),
         };
     }
 
-    Ok(())
+    Ok(out_err)
 }
 
 fn main() -> Result<()> {
@@ -53,6 +56,15 @@ fn main() -> Result<()> {
                 yr
             };
 
+            let sp = ProgressBar::new_spinner();
+            sp.set_message("Downloading...");
+            sp.enable_steady_tick(Duration::from_millis(80));
+            sp.set_style(
+                ProgressStyle::with_template("{spinner:.blue} {msg}")
+                    .unwrap()
+                    .tick_strings(&["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]),
+            );
+
             let inputs = days
                 .into_iter()
                 .map(|day| {
@@ -60,12 +72,16 @@ fn main() -> Result<()> {
                         .with_formatted_path(inputs.formatted_path.as_ref().map(|s| s.as_str()))
                 })
                 .collect();
-            download_inputs(
+
+            let errs = download_inputs(
                 &inputs,
                 &Secrets::load()
                     .session_token
                     .context("No session token found!\nPlease add a sesssion token first")?,
             )?;
+
+            sp.finish_and_clear();
+            errs.into_iter().for_each(|err| eprintln!("{}", err));
             println!("{}", "Done downloading input files!".green());
         }
         yadv::args::Commands::Credentials(creds) => {
