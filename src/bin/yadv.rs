@@ -1,11 +1,11 @@
-use anyhow::Context;
+use anyhow::{Context, Result};
 use chrono::Datelike;
 use clap::Parser;
 use colored::*;
 use std::{fs, io::Write, process};
 use yadv::{api::fetch_inputs, args::Cli, credentials::Secrets, inputs::AdvInput};
 
-fn download_inputs(inputs: &Vec<AdvInput>, session_token: &str) -> anyhow::Result<()> {
+fn download_inputs(inputs: &Vec<AdvInput>, session_token: &str) -> Result<()> {
     fs::create_dir_all(
         inputs
             .iter()
@@ -16,18 +16,21 @@ fn download_inputs(inputs: &Vec<AdvInput>, session_token: &str) -> anyhow::Resul
             .context("no parent folder exists")?,
     )?;
 
-    for (input, resp) in fetch_inputs(inputs, session_token)?
+    for (input, resp) in fetch_inputs(inputs, session_token)
         .into_iter()
         .enumerate()
         .map(|(i, resp)| (&inputs[i], resp))
     {
-        fs::File::create(input.path())?.write_all(resp.as_bytes())?;
+        match resp {
+            Ok(resp) => fs::File::create(input.path())?.write_all(resp.as_bytes())?,
+            Err(err) => eprintln!("{} {}", "Error:".red(), err.to_string().red()),
+        };
     }
 
     Ok(())
 }
 
-fn main() -> anyhow::Result<()> {
+fn main() -> Result<()> {
     let cli = Cli::parse();
 
     match cli.command {
