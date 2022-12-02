@@ -12,7 +12,7 @@
 
 Advent of Code session token is required for `yaadv` to work.
 
-Session token is stored inside Browser cookies. So to get your session token, Open up the devtools (Inspect tool) of your browser, and then go to:
+Session token is stored inside browser cookies. So to get your session token, First visit the [adventofcode](https://adventofcode.com) website and make sure you're logged in, then open up the devtools (Inspect tool) of your browser and go to:
 
 -   for Firefox: `Storage` tab, then under `Cookies`, copy the `Value` field of the `session` cookie.
 -   for Chromium: `Application` tab, then under `Cookies`, copy the `Value` field of the `session` cookie.
