@@ -17,8 +17,16 @@ pub enum Commands {
     /// Fetch your inputs from AOC
     #[command(short_flag = 'I')]
     Inputs(Inputs),
-    /// Manage AOC session token
-    #[command(short_flag = 'C', arg_required_else_help = true)]
+    /// Manage your AOC session token
+    #[command(
+        short_flag = 'C',
+        arg_required_else_help = true,
+        after_long_help = r#"
+How to get your session token from browser?
+    1. In a logged in session, get your session token from Cookies, under the "Storage"/"Application" tab, using Firefox/Chromium devtools respectively.
+    2. Or instead open the "Network" tab in devtools, and get the token from the Cookie header.
+    "#
+    )]
     Credentials(Credentials),
 }
 
@@ -39,9 +47,18 @@ pub struct Inputs {
     /// Current AOC year by default
     #[arg(short, long)]
     pub year: Option<i32>,
-    /// Set output directory for fetched inputs; `./inputs` by default
-    #[arg(short, long, value_name = "DIR")]
-    pub output: Option<String>,
+    /// Set formatted output path for fetched inputs
+    #[arg(
+        short = 'o',
+        long,
+        value_name = "PATTERN",
+        long_help = r#"
+Set formatted output path for fetched inputs
+Valid subtituted tokens: `{{day}}`, `{{year}}`
+For eg. `yadv -Id 1 -y 2022 -p "./inputs/day{{day}}.input"` will generate "./inputs/day1.input"
+    "#
+    )]
+    pub formatted_path: Option<String>,
 }
 
 #[derive(Args, Debug)]
