@@ -15,8 +15,8 @@ impl<'a> AdvInput<'a> {
             formatted_path: None,
         }
     }
-    pub fn set_formatted_path(mut self, pattern: &'a str) -> Self {
-        self.formatted_path = Some(pattern);
+    pub fn with_formatted_path(mut self, pattern: Option<&'a str>) -> Self {
+        self.formatted_path = pattern;
         self
     }
     fn filename(&self) -> String {

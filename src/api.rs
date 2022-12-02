@@ -3,7 +3,7 @@ use std::time::Duration;
 use ureq::AgentBuilder;
 
 /// Fetches AOC inputs synchronously
-pub fn fetch_inputs(inputs: &Vec<AdvInput>, session_token: String) -> anyhow::Result<Vec<String>> {
+pub fn fetch_inputs(inputs: &Vec<AdvInput>, session_token: &str) -> anyhow::Result<Vec<String>> {
     let mut out = vec![];
     let agent = AgentBuilder::new()
         .timeout_read(Duration::from_secs(5))
