@@ -117,7 +117,18 @@ fn main() -> Result<()> {
 
             sp.finish_and_clear();
             errs.into_iter().for_each(|err| eprintln!("{}", err));
-            eprintln!("{}", "Done downloading input files!".green());
+            eprintln!(
+                "{} {}",
+                "Done downloading input file[s] in".green(),
+                fs::canonicalize(
+                    inputs[0]
+                        .path()
+                        .parent()
+                        .context("no parent folder exists")?
+                )?
+                .to_string_lossy()
+                .yellow()
+            );
         }
         yaadv::args::Commands::Credentials(creds) => {
             if let Some(token) = creds.token {
