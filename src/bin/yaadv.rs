@@ -58,6 +58,15 @@ fn main() -> Result<()> {
 
     match cli.command {
         yaadv::args::Commands::Inputs(inputs) => {
+            let cfg = Config::load();
+            if inputs.config_exists {
+                if cfg.is_none() {
+                    eprintln!("{}", "Could not find the config file in pwd".red());
+                    process::exit(2);
+                }
+            }
+            let cfg = cfg.unwrap_or_default();
+
             let days = if let Some(day) = inputs.day {
                 vec![day]
             } else {
@@ -85,7 +94,6 @@ fn main() -> Result<()> {
                     .tick_strings(&["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]),
             );
 
-            let cfg = Config::load();
             let inputs = days
                 .into_iter()
                 .map(|day| {

@@ -9,7 +9,7 @@ pub struct Config {
 
 impl Config {
     /// load the `.yaadv.ron` config file from pwd, returns default if fails to load.
-    pub fn load() -> Self {
+    pub fn load() -> Option<Self> {
         let cfgs = [".yaadv.ron", ".yaadv"];
         let mut cfg_file = Path::new(cfgs[0]);
         for path in cfgs.iter().skip(1) {
@@ -19,6 +19,6 @@ impl Config {
                 break;
             }
         }
-        ron::from_str(fs::read_to_string(cfg_file).unwrap_or_default().as_str()).unwrap_or_default()
+        Some(ron::from_str(fs::read_to_string(cfg_file).ok()?.as_str()).unwrap_or_default())
     }
 }

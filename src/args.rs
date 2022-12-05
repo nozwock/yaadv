@@ -54,6 +54,9 @@ Valid subtituted tokens: `{{day}}`, `{{year}}`
 For eg. `yaadv -Id 1 -y 2022 -p "./inputs/day{{day}}.input"` will generate "./inputs/day1.input""#
     )]
     pub formatted_path: Option<String>,
+    /// Makes sure config exists in pwd
+    #[arg(long)]
+    pub config_exists: bool,
 }
 
 #[derive(Args, Debug)]
