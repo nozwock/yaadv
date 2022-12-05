@@ -18,6 +18,7 @@ ureq = "2.5.0"
 inquire = "0.5.2"
 colored = "2.0.0"
 indicatif = "0.17.2"
+ron = "0.8.0"
 
 [profile.release]
 strip = true

@@ -4,7 +4,7 @@ use clap::Parser;
 use colored::*;
 use indicatif::{ProgressBar, ProgressStyle};
 use std::{fs, io::Write, process, time::Duration};
-use yaadv::{api::fetch_inputs, args::Cli, credentials::Secrets, inputs::AdvInput};
+use yaadv::{api::fetch_inputs, args::Cli, config::Config, credentials::Secrets, inputs::AdvInput};
 
 fn download_inputs(inputs: &Vec<AdvInput>, session_token: &str) -> Result<Vec<String>> {
     fs::create_dir_all(
@@ -85,11 +85,18 @@ fn main() -> Result<()> {
                     .tick_strings(&["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]),
             );
 
+            let cfg = Config::load();
             let inputs = days
                 .into_iter()
                 .map(|day| {
-                    AdvInput::new(day, year)
-                        .with_formatted_path(inputs.formatted_path.as_ref().map(|s| s.as_str()))
+                    AdvInput::new(day, year).with_formatted_path(
+                        if inputs.formatted_path.is_some() {
+                            inputs.formatted_path.as_ref().map(|s| s.as_str())
+                        } else {
+                            // try to use path from cfg located in pwd
+                            cfg.path.as_ref().map(|s| s.as_str())
+                        },
+                    )
                 })
                 .collect();
 

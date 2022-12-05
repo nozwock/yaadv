@@ -51,7 +51,7 @@ pub struct Inputs {
         value_name = "PATTERN",
         long_help = r#"Set formatted output path for fetched inputs
 Valid subtituted tokens: `{{day}}`, `{{year}}`
-For eg. `yadv -Id 1 -y 2022 -p "./inputs/day{{day}}.input"` will generate "./inputs/day1.input""#
+For eg. `yaadv -Id 1 -y 2022 -p "./inputs/day{{day}}.input"` will generate "./inputs/day1.input""#
     )]
     pub formatted_path: Option<String>,
 }
