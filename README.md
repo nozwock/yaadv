@@ -31,7 +31,7 @@ yaadv -C
 
 Use `yaadv -h` to see all available options.
 
-Fetch all 25 days inputs for latest AOC year: (in `./inputs` by default)
+Fetch all 25 days input for the latest AOC year: (in `./inputs` by default)
 
 ```
 yaadv -I
