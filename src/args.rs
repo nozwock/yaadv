@@ -17,10 +17,9 @@ pub enum Commands {
     /// Fetch your AOC inputs
     #[command(short_flag = 'I')]
     Inputs(Inputs),
-    /// Manage your AOC session token
+    /// Manage your AOC session token; enters interactive mode by default
     #[command(
         short_flag = 'C',
-        arg_required_else_help = true,
         after_help = r#"To learn how to get your session token, take a look at:
 https://github.com/nozwock/yaadv#setting-up-the-cli"#
     )]
@@ -59,14 +58,11 @@ For eg. `yaadv -Id 1 -y 2022 -p "./inputs/day{{day}}.input"` will generate "./in
     pub config_exists: bool,
 }
 
-#[derive(Args, Debug)]
+#[derive(Debug, Args, Default, PartialEq, Eq)]
 pub struct Credentials {
     /// Show stored session token
     #[arg(short, long, exclusive = true)]
     pub show: bool,
-    /// Set session token in interactive mode
-    #[arg(short, long, exclusive = true)]
-    pub interactive: bool,
     /// Set session token
     #[arg(short, long, exclusive = true)]
     pub token: Option<String>,

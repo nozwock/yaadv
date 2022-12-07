@@ -3,7 +3,7 @@ use chrono::Datelike;
 use clap::Parser;
 use colored::*;
 use indicatif::{ProgressBar, ProgressStyle};
-use std::{fs, io::Write, process, time::Duration};
+use std::{fmt, fs, io::Write, process, time::Duration};
 use yaadv::{api::fetch_inputs, args::Cli, config::Config, credentials::Secrets, inputs::AdvInput};
 
 fn download_inputs(inputs: &Vec<AdvInput>, session_token: &str) -> Result<Vec<String>> {
@@ -51,6 +51,21 @@ fn download_inputs(inputs: &Vec<AdvInput>, session_token: &str) -> Result<Vec<St
     }
 
     Ok(out_err)
+}
+
+#[derive(Debug)]
+enum CredentialsOption {
+    ViewToken,
+    SetToken,
+}
+
+impl fmt::Display for CredentialsOption {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            CredentialsOption::ViewToken => write!(f, "View stored token"),
+            CredentialsOption::SetToken => write!(f, "Set a new token"),
+        }
+    }
 }
 
 fn main() -> Result<()> {
@@ -131,30 +146,52 @@ fn main() -> Result<()> {
             );
         }
         yaadv::args::Commands::Credentials(creds) => {
-            if let Some(token) = creds.token {
-                Secrets {
-                    session_token: Some(token),
-                }
-                .store()?;
-            }
+            if creds == Default::default() {
+                // default interactive mode
 
-            if creds.interactive {
-                let token = inquire::Password::new("Your session token:")
-                    .with_display_mode(inquire::PasswordDisplayMode::Masked)
-                    .without_confirmation()
-                    .prompt()?;
+                let choice = inquire::Select::new(
+                    "Credentials:",
+                    vec![CredentialsOption::ViewToken, CredentialsOption::SetToken],
+                )
+                .prompt()?;
 
-                let old_token = Secrets::load();
-                if old_token.get_session_token().is_some() {
-                    let confirm = inquire::Confirm::new(
-                        "Your previous session token will be overwritten, continue?",
-                    )
-                    .with_default(false)
-                    .prompt()?;
-                    if !confirm {
-                        process::exit(0);
+                match choice {
+                    CredentialsOption::ViewToken => {
+                        let token = Secrets::load();
+                        match token.get_session_token() {
+                            Some(token) => println!("Your session token: {}", token.bright_cyan()),
+                            None => {
+                                eprintln!("{}", "No session token found!".red());
+                                process::exit(1);
+                            }
+                        }
+                    }
+                    CredentialsOption::SetToken => {
+                        let token = inquire::Password::new("Your session token:")
+                            .with_display_mode(inquire::PasswordDisplayMode::Masked)
+                            .without_confirmation()
+                            .prompt()?;
+
+                        let old_token = Secrets::load();
+                        if old_token.get_session_token().is_some() {
+                            let confirm = inquire::Confirm::new(
+                                "Your previous session token will be overwritten, continue?",
+                            )
+                            .with_default(false)
+                            .prompt()?;
+                            if !confirm {
+                                process::exit(0);
+                            }
+                        }
+                        Secrets {
+                            session_token: Some(token),
+                        }
+                        .store()?;
                     }
                 }
+            }
+
+            if let Some(token) = creds.token {
                 Secrets {
                     session_token: Some(token),
                 }
