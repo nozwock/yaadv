@@ -1,6 +1,6 @@
 [package]
 name = "yaadv"
-version = "0.1.3"
+version = "0.1.4"
 authors = ["nozwock <magenta-duck.ezffr@slmail.me>"]
 description = "Yet another Advent of Code CLI tool"
 repository = "https://github.com/nozwock/yaadv"
